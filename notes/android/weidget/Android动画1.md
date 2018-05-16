@@ -1,9 +1,9 @@
  #属性动画之VauleAnimator
 ---
-####1.工作原理
+####工作原理
  * 在一定的时间间隔里，通过不断的对值进行改变，并不断地将该值赋值给对象的属性，从而实现该对象在属性上的动画效果。
 
-
+![属性动画原理.jpg](https://github.com/WenJunKing/MyNote/blob/master/pics/56d928466744f24d30c8a59bdaa08782_944365-16a162a731f548d8.png)
 ```java
 /**
  * Author:wenjundu on 2018/5/16
