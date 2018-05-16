@@ -1,22 +1,22 @@
-# 属性动画之VauleAnimator
+属性动画之VauleAnimator
 ---
-#### 工作原理
+####工作原理
  * 在一定的时间间隔里，通过不断的对值进行改变，并不断地将该值赋值给对象的属性，从而实现该对象在属性上的动画效果。
 
 ![属性动画原理.jpg](
 https://github.com/WenJunKing/MyNote/blob/master/pics/56d928466744f24d30c8a59bdaa08782_944365-16a162a731f548d8.png)
 * 从上述工作原理可以看出属性动画有两个非常重要的类：ValueAnimator 类  &ObjectAnimator 类
 * 其实属性动画的使用基本都是依靠这两个类。
-#### 具体使用
-##### 1.ValueAnimator类
+####具体使用
+#####1.ValueAnimator类
 * 定义：属性动画机制中最核心的一个类
 * 实现动画的原理：**通过不断地控制值得变化,再不断地手动的赋值给对象的属性，从而实现动画的效果。**
 
 从上面原理可以看出：ValueAnimator类中有3个重要方法：
-1. `ValueAnimator.ofInt（int values）`
-2. `ValueAnimator.ofFloat（float values）`
-3. `ValueAnimator.ofObject（int values）`
-##### ValueAnimator.ofInt(int... Values)
+1.`ValueAnimator.ofInt（int values）`
+2.`ValueAnimator.ofFloat（float values）`
+3.`ValueAnimator.ofObject（int values）`
+#####ValueAnimator.ofInt(int... Values)
 * 作用：将初始值 **以整型数值的形式** 过渡到结束值
 >即估值器是整型估值器 - IntEvaluator
 >
