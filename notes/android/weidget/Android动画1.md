@@ -1,41 +1,40 @@
- #���Զ���֮VauleAnimator
+属性动画之VauleAnimator
 ---
-####����ԭ��
- * ��һ����ʱ�����ͨ�����ϵĶ�ֵ���иı䣬�����ϵؽ���ֵ��ֵ����������ԣ��Ӷ�ʵ�ָö����������ϵĶ���Ч����
+####工作原理
+ * 在一定的时间间隔里，通过不断的对值进行改变，并不断地将该值赋值给对象的属性，从而实现该对象在属性上的动画效果。
 
-![���Զ���ԭ��.jpg](https://github.com/WenJunKing/MyNote/blob/master/pics/56d928466744f24d30c8a59bdaa08782_944365-16a162a731f548d8.png)
+![属性动画原理.jpg](
+https://github.com/WenJunKing/MyNote/blob/master/pics/56d928466744f24d30c8a59bdaa08782_944365-16a162a731f548d8.png)
+* 从上述工作原理可以看出属性动画有两个非常重要的类：ValueAnimator 类  &ObjectAnimator 类
+* 其实属性动画的使用基本都是依靠这两个类。
+####具体使用
+#####1.ValueAnimator类
+* 定义：属性动画机制中最核心的一个类
+* 实现动画的原理：**通过不断地控制值得变化,再不断地手动的赋值给对象的属性，从而实现动画的效果。**
+
+从上面原理可以看出：ValueAnimator类中有3个重要方法：
+1.`ValueAnimator.ofInt（int values）`
+2.`ValueAnimator.ofFloat（float values）`
+3.`ValueAnimator.ofObject（int values）`
+#####ValueAnimator.ofInt(int... Values)
+* 作用：将初始值 **以整型数值的形式** 过渡到结束值
+>即估值器是整型估值器 - IntEvaluator
+>
+* 实例：
 ```java
-/**
- * Author:wenjundu on 2018/5/16
- * Email: 179451678@qq.com
- * Description:
- */
-
-public class PointView extends View {
-    private final float RADIUS=70f;
-    private Point currentPoint;
-    private Paint mPaint;
-    public PointView(Context context) {
-        this(context,null);
+    Button ofIntBtn=findViewById(R.id.btn_ofint);
+    private void ofInt(){
+        int oldWidth=ofIntBtn.getLayoutParams().width;
+        Log.e(TAG,"oldWidth:"+oldWidth);
+        ValueAnimator valueAnimator=ValueAnimator.ofInt(oldWidth,500);
+        valueAnimator.setDuration(2000);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                ofIntBtn.getLayoutParams().width= (int) animation.getAnimatedValue();
+                ofIntBtn.requestLayout();
+            }
+        });
+        valueAnimator.start();
     }
-    public PointView(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
-        init();
-    }
-    private void init() {
-        // ��ʼ������
-        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mPaint.setColor(Color.BLUE);
-        currentPoint=new Point(RADIUS,RADIUS);
-    }
-    public void setCurrentPoint(Point point){
-        currentPoint=point;
-        requestLayout();
-    }
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        canvas.drawCircle(currentPoint.getX(),currentPoint.getY(),RADIUS,mPaint);
-    }
-}
 ```
