@@ -96,3 +96,35 @@ anim.start();
 在继续讲解`ValueAnimator.ofObject（）`的使用前，我先讲一下估值器（`TypeEvaluator`）
 
 ### 估值器（TypeEvaluator） 介绍
+* 作用：设置动画 **如何从初始值 过渡到 结束值 的逻辑**
+>1.  插值器（`Interpolator`）决定 值 的变化模式（匀速、加速blabla）
+>2. 估值器（`TypeEvaluator`）决定 值 的具体变化数值
+>
+从`ValueAnimator.ofInt`可以看到：
+* `ValueAnimator.ofInt（）`实现了 **将初始值 以整型的形式 过渡到结束值 ** 的逻辑，那么这个过渡逻辑具体是怎么样的呢？
+* 其实是系统内置了一个 `IntEvaluator`估值器，内部实现了初始值与结束值 以整型的过渡逻辑
+* 我们来看一下 `IntEvaluator`的代码实现：
+```java
+public class IntEvaluator implements TypeEvaluator<Integer> {
+    // 重写evaluate()
+    public Integer evaluate(float fraction, Integer startValue, Integer endValue) {
+        int startInt = startValue;
+        // 参数说明
+        // fraction：表示动画完成度（根据它来计算当前动画的值）
+        // startValue、endValue：动画的初始值和结束值
+        return (int)(startInt + fraction * (endValue - startInt));
+        // 初始值 过渡 到结束值 的算法是：
+        // 1. 用结束值减去初始值，算出它们之间的差值
+        // 2. 用上述差值乘以fraction系数
+        // 3. 再加上初始值，就得到当前动画的值
+    }
+}
+```
+* `ValueAnimator.ofInt（）` & `ValueAnimator.ofFloat（）`都具备系统内置的估值器，即`FloatEvaluator` & `IntEvaluator`
+>即系统已经默认实现了 **如何从初始值 过渡到 结束值 的逻辑**
+>
+* 但对于`ValueAnimator.ofObject（）`，从上面的工作原理可以看出并没有系统默认实现，因为对对象的动画操作复杂 & 多样，系统无法知道如何从初始对象过度到结束对象
+* 因此，对于`ValueAnimator.ofObject（）`，我们需自定义估值器（`TypeEvaluator`）来告知系统如何进行从 初始对象 过渡到 结束对象的逻辑。
+### 实例：
+* 实现的动画效果：一个圆从一个点 移动到 另外一个点
+![效果图.gif](https://github.com/WenJunKing/MyNote/blob/master/pics/efd2325c2319bc9b9c37bc314349dbda_944365-45b817bd4ca8c119.gif)
