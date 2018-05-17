@@ -127,4 +127,119 @@ public class IntEvaluator implements TypeEvaluator<Integer> {
 * 因此，对于`ValueAnimator.ofObject（）`，我们需自定义估值器（`TypeEvaluator`）来告知系统如何进行从 初始对象 过渡到 结束对象的逻辑。
 ### 实例：
 * 实现的动画效果：一个圆从一个点 移动到 另外一个点
+
 ![效果图.gif](https://github.com/WenJunKing/MyNote/blob/master/pics/efd2325c2319bc9b9c37bc314349dbda_944365-45b817bd4ca8c119.gif)
+
+### 步骤1：定义对象类
+* 因为`ValueAnimator.ofObject（）`是面向对象操作的，所以需要自定义对象类。
+* 本例需要操作的对象是**圆的点坐标**
+Point.java
+```java
+public class Point {
+    // 设置两个变量用于记录坐标的位置
+    private float x;
+    private float y;
+    public Point(float x,float y){
+        this.x=x;
+        this.y=y;
+    }
+    public float getX() {
+        return x;
+    }
+    public void setX(float x) {
+        this.x = x;
+    }
+    public float getY() {
+        return y;
+    }
+    public void setY(float y) {
+        this.y = y;
+    }
+}
+```
+### 步骤2：根据需求实现TypeEvaluator接口
+* 实现`TypeEvaluator`接口的目的是自定义如何 从初始点坐标 过渡 到结束点坐标；
+* 本例实现的是一个从左上角到右下角的坐标过渡逻辑。
+PointEvaluator.java
+```java
+
+/**
+ * Author:wenjundu on 2018/5/16
+ * Email: 179451678@qq.com
+ * Description:
+ */
+
+public class PointEvaluator implements TypeEvaluator<Point> {
+
+    @Override
+    public Point evaluate(float fraction, Point startValue, Point endValue) {
+        float x=startValue.getX()+fraction*(endValue.getX()-startValue.getX());
+        float y=startValue.getY()+fraction*(endValue.getY()-startValue.getY());
+        return new Point(x,y);
+    }
+}
+```
+### 步骤三：自定义View
+PointView.java
+```java
+/**
+ * Author:wenjundu on 2018/5/16
+ * Email: 179451678@qq.com
+ * Description:
+ */
+
+public class PointView extends View {
+    private final float RADIUS=70f;
+    private Point currentPoint;
+    private Paint mPaint;
+    public PointView(Context context) {
+        this(context,null);
+    }
+    public PointView(Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+        init();
+    }
+    private void init() {
+        // 初始化画笔
+        mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mPaint.setColor(Color.BLUE);
+        currentPoint=new Point(RADIUS,RADIUS);
+    }
+    //设置当前的Point
+    public void setCurrentPoint(Point point){
+        currentPoint=point;
+        requestLayout();
+    }
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        canvas.drawCircle(currentPoint.getX(),currentPoint.getY(),RADIUS,mPaint);
+    }
+}
+```
+### 步骤4：将属性动画作用到自定义View当中
+```java
+ /**
+     * VauleAnimator ofObject 实例
+     */
+    private void ofObject(){
+        Point startPoint=new Point(70,70);
+        Point endPoint=new Point(700,1000);
+        ValueAnimator valueAnimator=ValueAnimator.ofObject(new PointEvaluator(),startPoint,endPoint);
+        valueAnimator.setDuration(2000);
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                //调用自定义View的设置当前点的方法
+                pointView.setCurrentPoint((Point) animation.getAnimatedValue());
+            }
+        });
+        valueAnimator.start();
+    }
+```
+
+### 特别注意
+* 从上面可以看出，其实`ValueAnimator.ofObject（）`的本质还是操作 ** 值 **，只是是采用将 多个值 封装到一个对象里的方式 同时对多个值一起操作而已.
+>就像上面的例子，本质还是操作坐标中的x，y两个值，只是将其封装到Point对象里，方便同时操作x，y两个值而已.
+>
+* 至此，关于属性动画中最核心的 `ValueAnimator`类已经讲解完毕.
