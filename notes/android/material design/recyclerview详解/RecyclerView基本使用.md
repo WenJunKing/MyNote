@@ -75,4 +75,34 @@ public void getItemOffsets(Rect outRect, View view, RecyclerView parent, State s
 * `onDrawOver()`会在`ItemView`绘制之后再绘制，所以如果你在`onDrawOver()`方法中绘制的东西在`ItemView`边界内，就会盖住ItemView。简单点说，就是先执行`ItemDecoration的onDraw()`、再执行`ItemView的onDraw()`、再执行`ItemDecoration`的`onDrawOver()`。由于和`RecyclerView`使用的是同一个`Canvas`，所以你想在`Canvas`上画什么都可以，就像我们平时自定义`View`时写`onDraw()`方法一样。
 
 官方源码虽然都写的很清楚，但还不少小伙伴不知道怎么理解，怎么用或用哪个方法，下面画个简单的图来理解一下。
+![ItemDecoration.jpg](https://github.com/WenJunKing/MyNote/blob/master/pics/recyclerview_img_01.png)
+首先我们假设绿色区域代表的是我们的内容，红色区域代表我们自己绘制的装饰，可以看到：
+图1：代表了`getItemOffsets()`,可以实现类似padding的效果
+图2：代表了`onDraw()`,可以实现类似绘制背景的效果，内容在上面
+图3：代表了`onDrawOver()`，可以绘制在内容的上面，覆盖内容
 
+ok 接下来，让我们来实现实际开发中常遇到的场景。
+#### padding
+从前面的图可以看到实现这个效果，需要重写`getItemOffsets`方法。
+```java
+public class SimplePaddingDecoration extends RecyclerView.ItemDecoration {
+
+    private int dividerHeight;
+
+
+    public SimplePaddingDecoration(Context context) {
+        dividerHeight = context.getResources().getDimensionPixelSize(R.dimen.divider_height);
+    }
+
+    @Override
+    public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+        super.getItemOffsets(outRect, view, parent, state);
+        outRect.bottom = dividerHeight;//类似加了一个bottom padding
+    }
+}
+```
+没错，就这么2行代码，然后添加到`RecyclerView`
+```java
+recyclerView.addItemDecoration(new SimplePaddingDecoration(this));
+```
+实现效果：
