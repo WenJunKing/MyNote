@@ -75,7 +75,9 @@ public void getItemOffsets(Rect outRect, View view, RecyclerView parent, State s
 * `onDrawOver()`会在`ItemView`绘制之后再绘制，所以如果你在`onDrawOver()`方法中绘制的东西在`ItemView`边界内，就会盖住ItemView。简单点说，就是先执行`ItemDecoration的onDraw()`、再执行`ItemView的onDraw()`、再执行`ItemDecoration`的`onDrawOver()`。由于和`RecyclerView`使用的是同一个`Canvas`，所以你想在`Canvas`上画什么都可以，就像我们平时自定义`View`时写`onDraw()`方法一样。
 
 官方源码虽然都写的很清楚，但还不少小伙伴不知道怎么理解，怎么用或用哪个方法，下面画个简单的图来理解一下。
+
 ![ItemDecoration.jpg](https://github.com/WenJunKing/MyNote/blob/master/pics/recyclerview_img_01.png)
+
 首先我们假设绿色区域代表的是我们的内容，红色区域代表我们自己绘制的装饰，可以看到：
 图1：代表了`getItemOffsets()`,可以实现类似padding的效果
 图2：代表了`onDraw()`,可以实现类似绘制背景的效果，内容在上面
@@ -106,7 +108,9 @@ public class SimplePaddingDecoration extends RecyclerView.ItemDecoration {
 recyclerView.addItemDecoration(new SimplePaddingDecoration(this));
 ```
 实现效果：
+
 ![padding_itemDecoration.jpg](https://github.com/WenJunKing/MyNote/blob/master/pics/item_decoration_demo_01.png)
+
 ### 分割线
 分割线在app中是经常用到的，用`ItemDecoration`怎么实现呢，其实上面`padding`改成`1dp`就实现了分割线的效果，但是分割线的颜色只能是设置的`RecyclerView`背景色灰色，所以不能用这种方法。
 * 要实现分割线效果需要 `getItemOffsets()`和 `onDraw()`2个方法，首先用 `getItemOffsets`给item下方空出一定高度的空间），然后用`onDraw`绘制这个空间.
@@ -150,4 +154,5 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 }
 ```
 实现效果：
+
 ![divider_item_decoration.jpg](https://github.com/WenJunKing/MyNote/blob/master/pics/item_decoration_demo_02.png)
