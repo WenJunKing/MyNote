@@ -106,3 +106,48 @@ public class SimplePaddingDecoration extends RecyclerView.ItemDecoration {
 recyclerView.addItemDecoration(new SimplePaddingDecoration(this));
 ```
 实现效果：
+![padding_itemDecoration.jpg](https://github.com/WenJunKing/MyNote/blob/master/pics/item_decoration_demo_01.png)
+### 分割线
+分割线在app中是经常用到的，用`ItemDecoration`怎么实现呢，其实上面`padding`改成`1dp`就实现了分割线的效果，但是分割线的颜色只能是设置的`RecyclerView`背景色灰色，所以不能用这种方法。
+* 要实现分割线效果需要 `getItemOffsets()`和 `onDraw()`2个方法，首先用 `getItemOffsets`给item下方空出一定高度的空间），然后用`onDraw`绘制这个空间.
+```java
+public class DividerItemDecoration extends RecyclerView.ItemDecoration {
+    private int divider=1;
+    private Paint mPaint;
+    public DividerItemDecoration(Context context,int orientation){
+        mPaint = new Paint();
+        mPaint.setAntiAlias(true);
+        mPaint.setColor(Color.RED);
+    }
+
+
+    @Override
+    public void onDraw(Canvas c, RecyclerView parent, RecyclerView.State state) {
+           drawVertical(c,parent);
+    }
+
+    private void drawVertical(Canvas c, RecyclerView parent) {
+        int left=parent.getPaddingLeft()+50;
+        int right=parent.getWidth()-parent.getPaddingRight();
+        int childCount=parent.getChildCount();
+        for(int i=0;i<childCount;i++){
+            View child= parent.getChildAt(i);
+            RecyclerView.LayoutParams params= (RecyclerView.LayoutParams) child.getLayoutParams();
+            int top=child.getBottom()+params.bottomMargin;
+            int bottom=top+divider;
+            c.drawRect(left,top,right,bottom,mPaint);
+        }
+    }
+
+    @Override
+    public void getItemOffsets(Rect outRect,
+                               View view,
+                               RecyclerView parent,
+                               RecyclerView.State state) {
+
+            outRect.bottom=divider; 
+    }
+}
+```
+实现效果：
+![divider_item_decoration.jpg](https://github.com/WenJunKing/MyNote/blob/master/pics/item_decoration_demo_02.png)
