@@ -151,3 +151,76 @@ NewsObserver2:--> newsObserver2收到的News:今晚10点淘汰赛第一场法国
 ```
 #### 2.1 使用Java内置的类实现观察者模式
 * 借助于`java.util.Observable`和`java.util.Observer`。
+
+#### `Observable`类
+**`Observable`是一个抽象的主题对象。**
+一个被观测的对象必须服从下面的两个简单规则：
+* 第一，如果它被改变了，它必须调用`setChanged()`方法。
+* 第二，当它准备通知观测程序它的改变时，它必须调用`notifyObservers()`方法，这导致了在观测对象中对`update()`方法的调用。
+>注意：如果在调用`notifyObservers()`方法之前没有调用
+>  `setChanged()`方法，就不会有什么动作发生。
+> `notifyObservers()`方法中包含`clearChanged()`方法，将标志变量置回原值。
+> `notifyObservers()`方法采用的是从后向前的遍历方式，即最后加入的观察者最先被调用`update()`方法。
+
+#### `Observer`接口
+此接口中只有一个方法：
+`void update(Observable o, Object arg) `
+这个方法在被观察对象（`Observable`类）的`notifyObservers()`方法中被调用。
+
+首先是一个新闻订阅号主题：
+```java
+public class NewsInnerSubject extends Observable{
+    private String msg;
+    //主题更新消息
+    public void setMsg(String mgs){
+        this.msg=mgs;
+        setChanged();
+        notifyObservers(msg);
+    }
+}
+```
+定义两个观察者:
+```java
+public class NewsInnerObserver1 implements Observer{
+    private final String TAG="NewsInnerObserver1";
+    public NewsInnerObserver1(Observable observable){
+        observable.addObserver(this);
+    }
+    @Override
+    public void update(Observable o, Object arg) {
+        if(o instanceof NewsInnerSubject){
+            String msg= (String) arg;
+            Log.e(TAG, "NewsInnerObserver1:"+msg);
+        }
+    }
+}
+```
+```java
+public class NewsInnerObserver2 implements Observer{
+    private final String TAG="NewsInnerObserver2";
+    public NewsInnerObserver2(Observable observable){
+        observable.addObserver(this);
+    }
+    @Override
+    public void update(Observable o, Object arg) {
+        if(o instanceof NewsInnerSubject){
+            String msg= (String) arg;
+            Log.e(TAG,"NewsInnerObserver2:"+msg);
+        }
+    }
+}
+```
+测试调用：
+```java
+        NewsInnerSubject newsInnerSubject=new NewsInnerSubject();
+        NewsInnerObserver1 newsInnerObserver1=new NewsInnerObserver1(newsInnerSubject);
+        NewsInnerObserver2 newsInnerObserver2=new NewsInnerObserver2(newsInnerSubject);
+        newsInnerSubject.setMsg("使用java内置观察者模式！！！");
+```
+运行结果：
+```java
+NewsInnerObserver2---> NewsInnerObserver2:使用java内置观察者模式！！！
+NewsInnerObserver1---> NewsInnerObserver1:使用java内置观察者模式！！！
+```
+可以看出，使用Java内置的类实现观察者模式，代码非常简洁，对了`addObserver`,`removeObserver`,`notifyObservers`都已经为我们实现了，所有可以看出`Observable`（主题）是一个类，而不是一个接口，基本上书上都对于`Java`的如此设计抱有反面的态度，觉得`Java`内置的观察者模式，违法了面向接口编程这个原则，但是如果转念想一想，的确你拿一个主题在这写观察者模式（我们自己的实现），接口的思想很好，但是如果现在继续添加很多个主题，每个主题的`ddObserver`,`removeObserver`,`notifyObservers`代码基本都是相同的吧，接口是无法实现代码复用的，而且也没有办法使用组合的模式实现这三个方法的复用，所以我觉得这里把这三个方法在类中实现是合理的。
+
