@@ -11,13 +11,13 @@
 
 观察者的类图如下所示：
 
-![ObserverPatternUML.jpg]()
+![ObserverPatternUML.jpg](https://github.com/WenJunKing/MyNote/blob/master/pics/observer_pattern_uml01.jpg)
 
 #### 1.3适合使用观察者模式的情景:
 * 当一个对象的数据更新时需要通知其他对象，但这个对象又不希望和被通知的那些对象形成紧耦合。
 * 当一个对象的数据更新时，这个对象需要让其他对象也各自更新自己的数据，但这个对象不知道具体有多少对象需要更新数据。
 
-####1.4观察者模式的应用：
+#### 1.4观察者模式的应用：
 模拟一个新闻服务号和一些订阅者：
 
 首先开始写主题接口和观察者接口
