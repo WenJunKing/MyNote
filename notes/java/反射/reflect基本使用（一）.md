@@ -4,7 +4,7 @@
 #### 1.`Class`对象
 每个类都会产生一个对应的`Class`对象，也就是保存在.class文件。所有类都是在对其第一次使用时，动态加载到JVM的，当程序创建一个对类的静态成员的引用时，就会加载这个类。`Class`对象仅在需要的时候才会加载，`static`初始化是在类加载时进行的。
 
-![类加载过程.jpg]()
+![类加载过程.jpg](https://github.com/WenJunKing/MyNote/blob/master/pics/reflect_class_01)
 
   类加载器首先会检查这个类的`Class`对象是否已被加载过，如果尚未加载，默认的类加载器就会根据类名查找对应的.class文件。
 
