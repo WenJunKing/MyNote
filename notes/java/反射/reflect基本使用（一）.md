@@ -151,3 +151,121 @@ public class Person {
 所有的构造函数：private reflect.Person()
 
 ```
+③获取成员变量并调用：
+```java
+	public static void fieldTest(Class<?> clazz)throws Exception{
+		Field nameField=clazz.getDeclaredField("name");
+		//获取String 和int类型的这两个参数的构造函数，并初始化值（陈燕,28）。
+		Object object=clazz.getConstructor(String.class,int.class).newInstance("陈燕",28);
+		System.out.println(object.getClass().getName());
+		//暴力反射，解除私有限定
+		nameField.setAccessible(true);
+		//设置姓名 张三
+		nameField.set(object, "张三");
+		Person person=(Person) object;
+		System.out.println("验证姓名："+person.getName());
+	}
+```
+运行结果：
+```java
+reflect.Person
+验证姓名：张三
+
+```
+④获取成员方法并调用：
+```java
+	public static void methodTest(Class<?> clazz)throws Exception{
+		//获取公有的 带String参数的 setName方法
+		Method method=clazz.getMethod("setName", String.class);
+		//实例化一个私有无参的Person对象
+		Constructor constructor=clazz.getDeclaredConstructor();
+		constructor.setAccessible(true);
+		Object object=constructor.newInstance();
+		//调用该方法，设置值
+		method.invoke(object, "刘德华");
+		Person person=(Person) object;
+		System.out.println("验证姓名："+person.getName());
+	}
+```
+运行结果:
+```java
+验证姓名：刘德华
+
+```
+`getDeclaredMethod(String name, Class<?>... parameterTypes);`调用制定方法（所有包括私有的），需要传入两个参数，第一个是调用的方法名称，第二个是方法的形参类型，切记是类型。
+
+### 3.反射方法的其它使用之---通过反射运行配置文件内容
+配置文件以txt文件为例子（pro.txt）：
+```java
+className = cn.fanshe.Student
+methodName = show
+```
+`student`类：
+```java
+
+public class Student {
+	public void show(){
+		System.out.println("is show()");
+	}
+}
+```
+测试类：
+```java
+public class Demo {
+	public static void main(String[] args) throws Exception {
+		//通过反射获取Class对象
+		Class stuClass = Class.forName(getValue("className"));//"cn.fanshe.Student"
+		//2获取show()方法
+		Method m = stuClass.getMethod(getValue("methodName"));//show
+		//3.调用show()方法
+		m.invoke(stuClass.getConstructor().newInstance());
+		
+	}
+	
+	//此方法接收一个key，在配置文件中获取相应的value
+	public static String getValue(String key) throws IOException{
+		Properties pro = new Properties();//获取配置文件的对象
+		FileReader in = new FileReader("pro.txt");//获取输入流
+		pro.load(in);//将流加载到配置文件对象中
+		in.close();
+		return pro.getProperty(key);//返回根据key获取的value值
+	}
+}
+```
+控制台输出：
+```java
+is show()
+```
+### 4.反射方法的其它使用之---通过反射越过泛型检查
+
+泛型用在编译期，编译过后泛型擦除（消失掉）。所以是可以通过反射越过泛型检查的。
+测试类：
+```java
+public class Demo {
+	public static void main(String[] args) throws Exception{
+		ArrayList<String> strList = new ArrayList<>();
+		strList.add("aaa");
+		strList.add("bbb");
+		
+	//	strList.add(100);
+		//获取ArrayList的Class对象，反向的调用add()方法，添加数据
+		Class listClass = strList.getClass(); //得到 strList 对象的字节码 对象
+		//获取add()方法
+		Method m = listClass.getMethod("add", Object.class);
+		//调用add()方法
+		m.invoke(strList, 100);
+		
+		//遍历集合
+		for(Object obj : strList){
+			System.out.println(obj);
+		}
+	}
+}
+
+```
+控制台输出：
+```java
+aaa
+bbb
+100
+```
