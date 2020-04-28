@@ -1,7 +1,3 @@
----
-typora-root-url: ..\..\..\..
----
-
 转自： [鸿洋大神](http://blog.csdn.net/lmj623565791/article/details/45059587)
 ### 概述
 有了ListView、GridView为什么还需要RecyclerView这样的控件呢？整体上看RecyclerView提供了一种插拔式的体验，高度的解耦，异常的灵活，通过设置它提供的不同`LayoutManager`，`ItemDecoration` , `ItemAnimator`实现令人瞠目的效果。
@@ -80,7 +76,7 @@ public void getItemOffsets(Rect outRect, View view, RecyclerView parent, State s
 
 官方源码虽然都写的很清楚，但还不少小伙伴不知道怎么理解，怎么用或用哪个方法，下面画个简单的图来理解一下。
 
-![ItemDecoration.jpg](/pics/recyclerview_img_01.png)
+![recyclerview_img_01](../../../../pics/recyclerview_img_01.png)
 
 首先我们假设绿色区域代表的是我们的内容，红色区域代表我们自己绘制的装饰，可以看到：
 图1：代表了`getItemOffsets()`,可以实现类似padding的效果
@@ -113,7 +109,7 @@ recyclerView.addItemDecoration(new SimplePaddingDecoration(this));
 ```
 实现效果：
 
-![padding_itemDecoration.jpg](/pics/item_decoration_demo_01.png)
+![item_decoration_demo_01](../../../../pics/item_decoration_demo_01.png)
 
 分割线在app中是经常用到的，用`ItemDecoration`怎么实现呢，其实上面`padding`改成`1dp`就实现了分割线的效果，但是分割线的颜色只能是设置的`RecyclerView`背景色灰色，所以不能用这种方法。
 * 要实现分割线效果需要 `getItemOffsets()`和 `onDraw()`2个方法，首先用 `getItemOffsets`给item下方空出一定高度的空间），然后用`onDraw`绘制这个空间.
@@ -158,5 +154,4 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 ```
 实现效果：
 
-![divider_item_decoration.jpg](/pics/item_decoration_demo_02.png)
-
+![item_decoration_demo_02](../../../../pics/item_decoration_demo_02.png)
